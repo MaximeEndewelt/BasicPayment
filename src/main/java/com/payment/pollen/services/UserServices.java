@@ -16,13 +16,16 @@ public class UserServices
     @Autowired
     private IUserRepository userRepository;
 
-    public void authenticateUser(User user) throws Exception
+    public void authenticateUser(User user) throws  Exception
     {
         // Assumption is that the UI send email and password
         // and the Backend store a new user if there is no such email in DB
         // or authenticate if the email is already stored
-        boolean exists = userRepository.checkIfUserExists(user.getEmail());
+        System.out.println("BEfore ");
 
+        Boolean exists = userRepository.existsById(user.getEmail());
+
+        System.out.println("Exists : "+exists);
         //
         // Encrypt password first
         //
@@ -44,11 +47,12 @@ public class UserServices
             //
             // Store new user with hashed password
             //
-
+            System.out.println("Save user");
             user.setPassword(encryptedPassword);
             userRepository.save(user);
         }
     }
+
 
     private String encryptPassword(String rawPassword) throws Exception
     {

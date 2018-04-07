@@ -5,11 +5,12 @@ import com.payment.pollen.services.UserServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping("/register")
+@RequestMapping("/user")
 @RestController
 public class LoginController
 {
@@ -17,7 +18,7 @@ public class LoginController
     private UserServices userServices;
 
     @RequestMapping(value = "signup", method = RequestMethod.POST)
-    public ResponseEntity<?> signUp(User user)
+    public ResponseEntity<?> signUp(@RequestBody  User user)
     {
         try
         {
@@ -27,12 +28,13 @@ public class LoginController
         }
         catch (Exception e)
         {
-            return convertException(e);
+            return ExceptionConverter.convertException(e);
         }
     }
 
     private void validateUserInput(User user)
     {
+        System.out.println("USer email : "+user.getEmail()+ " - password : "+user.getPassword());
         String email = user.getEmail();
         String password = user.getPassword();
 
@@ -45,25 +47,5 @@ public class LoginController
         {
             throw new IllegalArgumentException(ExceptionConverter.NO_PASSWORD);
         }
-    }
-
-    private ResponseEntity<?> convertException(Exception exception)
-    {
-        ResponseEntity output = null;
-        switch (exception.getMessage())
-        {
-            case ExceptionConverter.NO_EMAIL :
-            case ExceptionConverter.NO_PASSWORD :
-                output = ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                                       .body(exception.getMessage());
-                break;
-
-            case ExceptionConverter.WRONG_PASSWORD:
-                output = ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                                       .body(exception.getMessage());
-                break;
-        }
-
-        return output;
     }
 }
