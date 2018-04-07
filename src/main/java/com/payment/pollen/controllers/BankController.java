@@ -5,6 +5,7 @@ import com.payment.pollen.services.BankServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,7 +18,7 @@ public class BankController
     BankServices bankServices;
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public ResponseEntity<?> addBank(BankAccount bankAccount)
+    public ResponseEntity<?> addBank(@RequestBody BankAccount bankAccount)
     {
         try
         {
@@ -35,7 +36,7 @@ public class BankController
     {
         String name = bankAccount.getName();
         String iban = bankAccount.getIban();
-        long customerId = bankAccount.getCustomerId();
+        String userEmail = bankAccount.getUserEmail();
 
         if(name == null || name.equals(""))
         {
@@ -47,9 +48,9 @@ public class BankController
             throw new IllegalArgumentException("The iban must be provided");
         }
 
-        if(customerId < 0)
+        if(userEmail == null || userEmail.equals(""))
         {
-            throw new IllegalArgumentException("The customer Id must be provided");
+            throw new IllegalArgumentException("The user email must be provided");
         }
     }
 }

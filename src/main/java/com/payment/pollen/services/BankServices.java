@@ -40,14 +40,14 @@ public class BankServices
 
     private void verifyBankDetails(BankAccount bankAccount) throws Exception
     {
-        verifyUser(bankAccount.getCustomerId());
+        verifyUser(bankAccount.getUserEmail());
         verifyIban(bankAccount.getIban());
     }
 
 
-    private void verifyUser(long userId) throws Exception
+    private void verifyUser(String userEmail) throws Exception
     {
-        boolean verified = userRepository.checkIfUserExistsFromId(userId);
+        Boolean verified = userRepository.existsById(userEmail);
         if(!verified)
         {
             throw new Exception("The user does not exists");

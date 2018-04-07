@@ -1,29 +1,24 @@
 package com.payment.pollen.entities;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
 public class BankAccount
 {
     @Id
-    @GeneratedValue
-    private long id;
-
-    private long customerId;
-
     private String name;
 
     private String iban;
 
+    private String userEmail;
 
-    public long getCustomerId() {
-        return customerId;
+    public String getUserEmail() {
+        return userEmail;
     }
 
-    public void setCustomerId(long customerId) {
-        this.customerId = customerId;
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 
     public String getName() {

@@ -21,11 +21,10 @@ public class UserServices
         // Assumption is that the UI send email and password
         // and the Backend store a new user if there is no such email in DB
         // or authenticate if the email is already stored
-        System.out.println("BEfore ");
 
+        // Boolean object needs to be used to avoid NPE when empty records
         Boolean exists = userRepository.existsById(user.getEmail());
 
-        System.out.println("Exists : "+exists);
         //
         // Encrypt password first
         //
@@ -39,8 +38,11 @@ public class UserServices
             String savedPassword = userRepository.getPasswordFromEmail(user.getEmail());
             if(!savedPassword.equals(encryptedPassword))
             {
+                System.out.println("here");
                 throw new Exception("Password is invalid");
             }
+            System.out.println("what");
+
         }
         else
         {
