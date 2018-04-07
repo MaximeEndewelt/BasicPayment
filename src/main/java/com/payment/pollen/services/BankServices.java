@@ -3,8 +3,9 @@ package com.payment.pollen.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.payment.pollen.entities.BankAccount;
 import com.payment.pollen.entities.Iban;
-import com.payment.pollen.entities.User;
+import com.payment.pollen.entities.Code;
 import com.payment.pollen.repositories.IBankRepository;
+import com.payment.pollen.repositories.ISharedCodeRepository;
 import com.payment.pollen.repositories.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
@@ -12,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
+import java.util.List;
 
 @Service
 public class BankServices
@@ -26,6 +27,9 @@ public class BankServices
     @Autowired
     private IBankRepository bankRepository;
 
+    @Autowired
+    private ISharedCodeRepository sharedCodeRepository;
+
     public void addBankDetails(BankAccount bankAccount) throws Exception
     {
         //
@@ -35,7 +39,26 @@ public class BankServices
         //
         verifyBankDetails(bankAccount);
         bankRepository.save(bankAccount);
+    }
 
+    public void shareDetails(Code code) throws Exception
+    {
+        //
+        // Second part of validation
+        // Verify that users exists
+        //
+        verifyUser(code.getUserEmail());
+        verifyUser(code.getRecipientEmail());
+        sharedCodeRepository.save(code);
+    }
+
+    public List<Code> getSharedDetails(String recipientEmail) throws Exception
+    {
+        System.out.println("Recipient email  : "+recipientEmail);
+        List<Code> codes = null;
+        verifyUser(recipientEmail);
+        codes = sharedCodeRepository.getAllByRecipientEmail(recipientEmail);
+        return codes;
     }
 
     private void verifyBankDetails(BankAccount bankAccount) throws Exception

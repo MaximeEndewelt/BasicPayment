@@ -55,9 +55,9 @@ public class UserServices
         }
     }
 
-
     private String encryptPassword(String rawPassword) throws Exception
     {
+
         String hex = null;
         try
         {
@@ -73,4 +73,5 @@ public class UserServices
 
         return hex;
     }
+
 }

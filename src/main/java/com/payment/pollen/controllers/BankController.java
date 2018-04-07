@@ -1,14 +1,14 @@
 package com.payment.pollen.controllers;
 
 import com.payment.pollen.entities.BankAccount;
+import com.payment.pollen.entities.Code;
 import com.payment.pollen.services.BankServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequestMapping("/bank")
 @RestController
@@ -25,6 +25,35 @@ public class BankController
             validateBankDetails(bankAccount);
             bankServices.addBankDetails(bankAccount);
             return new ResponseEntity<>(HttpStatus.OK);
+        }
+        catch (Exception e)
+        {
+            return ExceptionConverter.convertException(e);
+        }
+    }
+
+    @RequestMapping(value = "/share", method = RequestMethod.POST)
+    public ResponseEntity<?> shareCode(@RequestBody Code code)
+    {
+        try
+        {
+            validateSharedCode(code);
+            bankServices.shareDetails(code);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        catch (Exception e)
+        {
+            return ExceptionConverter.convertException(e);
+        }
+    }
+
+    @RequestMapping(value = "/getSharedCodes/{email}", method = RequestMethod.GET)
+    public ResponseEntity<?> getSharedCodes(@PathVariable("email") String email)
+    {
+        try
+        {
+            List<Code> codes = bankServices.getSharedDetails(email);
+            return ResponseEntity.status(HttpStatus.OK).body(codes);
         }
         catch (Exception e)
         {
@@ -51,6 +80,28 @@ public class BankController
         if(userEmail == null || userEmail.equals(""))
         {
             throw new IllegalArgumentException("The user email must be provided");
+        }
+    }
+
+    private void validateSharedCode(Code sharedCode)
+    {
+        String userEmail = sharedCode.getUserEmail();
+        String recipientEmail = sharedCode.getRecipientEmail();
+        String code = sharedCode.getCode();
+
+        if(userEmail == null || userEmail.equals(""))
+        {
+            throw new IllegalArgumentException("The user email must be provided");
+        }
+
+        if(recipientEmail == null || recipientEmail.equals(""))
+        {
+            throw new IllegalArgumentException("The recipient email must be provided");
+        }
+
+        if(code == null || code.equals(""))
+        {
+            throw new IllegalArgumentException("The code must be provided");
         }
     }
 }
