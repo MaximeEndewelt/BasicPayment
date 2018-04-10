@@ -1,0 +1,317 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<script
+        src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous">
+</script>
+
+<script src="https://npmcdn.com/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+
+
+
+
+<body>
+<div id="payment">
+<!--<h1>  WELCOME TO HANGMAN  </h1>-->
+
+<!--<p>-->
+    <!--<input type="text"  id="myInput" disabled/>-->
+<!--</p>-->
+
+<!--<p>-->
+    <!--<input type="text" placeholder="Type password" maxlength="1"  id="myCharacter"/>-->
+<!--</p>-->
+
+<!--<button type="button" id="start">-->
+    <!--Start Game-->
+<!--</button>-->
+
+<!--<p>-->
+    <!--<input type="text" placeholder="Type email" id="userEmail"/>-->
+<!--</p>-->
+
+<!--<p>-->
+    <!--<input type="text" placeholder="Type password" maxlength="1"  id="userPassword"/>-->
+<!--</p>-->
+
+<!--<button type="button" id="login">-->
+    <!--Log In-->
+<!--</button>-->
+
+<!--<p>-->
+    <!--<button type="button"  disabled id="submit">-->
+        <!--Submit character-->
+    <!--</button>-->
+<!--</p>-->
+
+
+
+<!--<p>-->
+    <!--<input id="state" type="text"  disabled/>-->
+<!--</p>-->
+
+
+<!--<table id="myTable">-->
+    <!--<thead>id    </thead><thead>     Tried Characters</thead>-->
+    <!--<tbody></tbody>-->
+
+<!--</table>-->
+        <!-- @submit handles any form of submission. -->
+        <!-- .prevent keeps the event from bubbling around and doing anything else. -->
+    <!--<form @submit="sub"   method="post">-->
+<div v-if="showLogin">
+        <input v-model="userEmail" placeholder="Email">
+        <input v-model="userPassword" placeholder="Password">
+        <button type="button" v-on:click="sub">Login</button>
+</div>
+<div v-if="!showLogin">
+        <p>User {{userEmail}} is logged in</p>
+</div>
+    <!--</form>-->
+
+</div>
+</body>
+
+
+
+<script>
+    new Vue({
+        el: '#payment',
+        data: {
+            userEmail: "",
+            userPassword : "",
+            loggedIn : false,
+            iban : "",
+            bankName : "",
+            showLogin: true
+        },
+
+        methods : {
+            sub: function(event){
+
+                if(this.userEmail == "" || this.userPassword == ""){
+
+                    event.preventDefault();
+                }else{
+                    var payload = { "email" : this.userEmail , "password" : this.userPassword};
+
+                    $.ajax({
+                        url: 'http://localhost:8585/user/signup',
+                        type: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        dataType: 'application/json',
+                        complete: function (data, textStatus, jqXHR) {
+                           console.log(data.status);
+                           if(data.status === 200)
+                           {
+                               console.log("In there");
+                               this.showLogin = false;
+                           }
+                        }.bind(this),
+                        data: JSON.stringify(payload)
+                    });
+                }
+            },
+
+        }
+    })
+
+</script>
+
+
+
+<!--<script>-->
+
+    <!--$(document).ready(function() {-->
+        <!--var character = null;-->
+        <!--var state = null;-->
+        <!--var word = '';-->
+
+        <!--var id = sessionStorage.getItem('id') ? sessionStorage.getItem('id') : 1;-->
+
+        <!--// Call pending games-->
+        <!--var theRequest = $.ajax({-->
+            <!--url: "http://localhost:8585/game/list",-->
+            <!--method: 'GET',-->
+        <!--}).done(function(data){-->
+            <!--updateGameList(data);-->
+        <!--});-->
+
+        <!--if(sessionStorage.getItem('id'))-->
+        <!--{-->
+            <!--resumeGame(id);-->
+        <!--}-->
+
+
+        <!--$("#myCharacter").keyup( function () {-->
+            <!--$('#submit').removeAttr('disabled');-->
+        <!--})-->
+
+
+        <!--$("#start").click(function () {-->
+            <!--var theRequest = $.ajax({-->
+                <!--url: "http://localhost:8585/game",-->
+                <!--method: 'GET',-->
+            <!--}).done(function(data){-->
+                <!--displayBlankWord(data.word);-->
+                <!--id  = data.id;-->
+                <!--sessionStorage.setItem('id', id);-->
+
+            <!--});-->
+        <!--})-->
+
+        <!--$("#submit").click(function () {-->
+            <!--character = $("#myCharacter").val();-->
+            <!--var payload = {-->
+                <!--"id": id,-->
+                <!--"character": character-->
+            <!--}-->
+
+
+            <!--$.ajax({-->
+                <!--url: 'http://localhost:8585/game/try',-->
+                <!--type: 'POST',-->
+                <!--headers: {-->
+                    <!--'Accept': 'application/json',-->
+                    <!--'Content-Type': 'application/json'-->
+                <!--},-->
+                <!--dataType: 'application/json',-->
+                <!--complete: function (data, textStatus, jqXHR) {-->
+                    <!--$("#myCharacter").val('');-->
+                    <!--retrieveGameStatus(data);-->
+                    <!--updateGameObject(data.responseText);-->
+
+                <!--},-->
+                <!--data: JSON.stringify(payload)-->
+            <!--});-->
+        <!--})-->
+
+
+        <!--function retrieveGameStatus(data) {-->
+            <!--var dataObj = JSON.parse(data.responseText);-->
+            <!--var word = dataObj.word;-->
+            <!--var wordArray = word.split('');-->
+
+            <!--state = dataObj.state;-->
+            <!--updateGameState(state);-->
+
+
+            <!--var triedCharacter = dataObj.triedCharacters;-->
+            <!--var wordDisplayed = '';-->
+
+            <!--for(var i = 0 ; i < wordArray.length; i++)-->
+            <!--{-->
+                <!--var found = false;-->
+                <!--for(var j = 0 ; j < triedCharacter.length; j++)-->
+                <!--{-->
+                    <!--if(wordArray[i] == triedCharacter[j])-->
+                    <!--{-->
+                        <!--wordDisplayed += triedCharacter[j];-->
+                        <!--found = true;-->
+                    <!--}-->
+                <!--}-->
+
+                <!--if(!found)-->
+                <!--{-->
+                    <!--wordDisplayed += '*';-->
+                <!--}-->
+            <!--}-->
+
+            <!--displayWord(wordDisplayed);-->
+        <!--}-->
+
+
+        <!--function displayWord(word) {-->
+            <!--$("#myInput").val(word);-->
+        <!--}-->
+
+        <!--function displayBlankWord(word) {-->
+            <!--var blankWord = '';-->
+            <!--for(i = 0 ; i < word.length; i++)-->
+            <!--{-->
+                <!--blankWord += '*';-->
+            <!--}-->
+            <!--$("#myInput").val(blankWord);-->
+        <!--}-->
+
+        <!--function updateGameState(state) {-->
+            <!--$("#state").val(state);-->
+        <!--}-->
+
+
+        <!--function updateGameObject(data) {-->
+            <!--var tmp = JSON.parse(data);-->
+
+            <!--$("#myTable").find('tbody')-->
+                <!--.append($('<tr>')-->
+                    <!--.append($('<td>')-->
+                        <!--.append((tmp.id)-->
+                        <!--)-->
+                    <!--)-->
+                    <!--.append($('<td>')-->
+                        <!--.append(tmp.triedCharacters)-->
+                    <!--)-->
+                <!--).click(function (e) {-->
+                <!--e.stopPropagation();-->
+                <!--resumeGame(tmp.id) });-->
+        <!--}-->
+
+
+        <!--function updateGameList(data) {-->
+
+            <!--for(var i = 0 ; i < data.length; i++)-->
+            <!--{-->
+                <!--var dataRow = data[i];-->
+                <!--$("#myTable").find('tbody')-->
+                    <!--.append($('<tr>')-->
+                        <!--.append($('<td>')-->
+                            <!--.append((dataRow.id)-->
+                            <!--)-->
+                        <!--)-->
+                        <!--.append($('<td>')-->
+                            <!--.append(dataRow.triedCharacters)-->
+                        <!--)-->
+                    <!--).click(function (e) {-->
+                    <!--e.stopPropagation();-->
+                    <!--resumeGame(id) });-->
+            <!--}-->
+        <!--}-->
+
+        <!--function resumeGame(gameId) {-->
+            <!--var payload = {-->
+                <!--"id": gameId-->
+            <!--}-->
+
+            <!--$.ajax({-->
+                <!--url: 'http://localhost:8585/game/resume',-->
+                <!--type: 'POST',-->
+                <!--headers: {-->
+                    <!--'Accept': 'application/json',-->
+                    <!--'Content-Type': 'application/json'-->
+                <!--},-->
+                <!--dataType: 'application/json',-->
+                <!--complete: function (data, textStatus, jqXHR) {-->
+
+                    <!--if(textStatus !== 'error')-->
+                    <!--{-->
+                        <!--$("#myCharacter").val('');-->
+                        <!--retrieveGameStatus(data);-->
+                    <!--}-->
+                <!--},-->
+                <!--data: JSON.stringify(payload)-->
+            <!--});-->
+
+        <!--}-->
+
+    <!--})-->
+
+<!--</script>-->
+
+
+</html>

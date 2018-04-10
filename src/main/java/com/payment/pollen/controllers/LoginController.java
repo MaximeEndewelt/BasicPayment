@@ -20,6 +20,7 @@ public class LoginController
     @RequestMapping(value = "signup", method = RequestMethod.POST)
     public ResponseEntity<?> signUp(@RequestBody  User user)
     {
+        System.out.println("Hello");
         try
         {
             validateUserInput(user);
